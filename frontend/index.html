@@ -17,6 +17,7 @@
       </a>
       <p class="side-intro">真实数据训练、离线评测与在线推荐演示。</p>
       <nav>
+        <a class="nav-link" href="#journey"><span>00</span><b>研究历程</b><small>想法到上线的六步</small></a>
         <a class="nav-link active" href="#data"><span>01</span><b>真实训练数据</b><small>数据规模与时间划分</small></a>
         <a class="nav-link" href="#training"><span>02</span><b>推荐模型训练</b><small>学习过程与版本选择</small></a>
         <a class="nav-link" href="#evidence"><span>03</span><b>推荐效果验证</b><small>测试结果与在线演示</small></a>
@@ -39,12 +40,57 @@
           <p class="eyebrow">RECOMMENDATION ALGORITHM LAB</p>
           <h1>短视频推荐<br /><em>从训练到验证。</em></h1>
           <p class="hero-lead">用真实行为日志训练排序模型，并通过独立测试和在线接口验证效果。</p>
-          <a class="button primary" href="#data">开始查看实验 <span>↓</span></a>
+          <a class="button primary" href="#journey">从研究历程开始 <span>↓</span></a>
         </div>
         <div class="hero-proof" aria-label="算法验证三个阶段">
           <article><small>01 / 真实数据</small><strong id="heroRows">—</strong><span>用户与视频交互记录</span></article>
           <article><small>02 / 最佳模型</small><strong id="heroWinner">—</strong><span>由验证数据自动选择</span></article>
           <article><small>03 / 离线效果</small><strong id="heroAuc">—</strong><span>长播内容排序能力</span></article>
+        </div>
+      </section>
+
+      <section class="section journey-section" id="journey">
+        <div class="section-heading">
+          <div><p class="eyebrow">00 · 研究历程</p><h2>从想法到上线</h2></div>
+          <p>六步演化;每一步都有可复现的数字、报告与提交记录。</p>
+        </div>
+        <div class="journey-flow" aria-label="研究历程时间线">
+          <article class="journey-node">
+            <small>01 / 问题</small>
+            <strong>研究问题确立</strong>
+            <p>在快手真实日志上,序列建模与多任务结构是否优于强特征交叉?</p>
+            <span>KuaiRand-Pure · 5,000 用户 · 48.2 万交互</span>
+          </article>
+          <article class="journey-node">
+            <small>02 / 对照</small>
+            <strong>三模型同协议对照</strong>
+            <p>DeepFM / DIN / DIN+MMoE,时间正确特征与请求级防泄漏。</p>
+            <span>seed 2026 胜者 DeepFM · 验证 GAUC 0.6395</span>
+          </article>
+          <article class="journey-node">
+            <small>03 / 纪律</small>
+            <strong>统计纪律建立</strong>
+            <p>重训后胜者翻转;引入用户级配对 bootstrap 与多 seed 检验。</p>
+            <span>3 seed 胜者 1:2 · 测试集差距 CI 全跨零</span>
+          </article>
+          <article class="journey-node">
+            <small>04 / 谱系</small>
+            <strong>注意力谱系扩展</strong>
+            <p>SASRec / BST / AutoInt 加入同协议、同参数量级对照。</p>
+            <span>序列自注意力无增益 · SASRec 显著差于基线</span>
+          </article>
+          <article class="journey-node">
+            <small>05 / 发现</small>
+            <strong>唯一稳健增益</strong>
+            <p>特征域注意力(AutoInt)跨 seed 一致胜出,增益在用户级 GAUC。</p>
+            <span>3/3 seed 胜出 · 0.6431 ± 0.0031</span>
+          </article>
+          <article class="journey-node">
+            <small>06 / 发布</small>
+            <strong>按声明协议上线</strong>
+            <p>manifest 重建、压测重跑,延迟代价如实记录并保留回滚路径。</p>
+            <span>QPS 93.7 · p95 121ms(换取排序增益)</span>
+          </article>
         </div>
       </section>
 

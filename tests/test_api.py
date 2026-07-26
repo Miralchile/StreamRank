@@ -65,6 +65,8 @@ class ApiTests(unittest.TestCase):
         self.assertIn('name="history_length" type="number"', dashboard.text)
         self.assertIn("模拟长播反馈并刷新", dashboard.text)
         self.assertIn('id="pipelineFunnel"', dashboard.text)
+        self.assertIn('id="journey"', dashboard.text)
+        self.assertIn("研究历程", dashboard.text)
         stylesheet = self.client.get("/assets/styles.css")
         self.assertEqual(stylesheet.status_code, 200)
         self.assertIn("--acid", stylesheet.text)

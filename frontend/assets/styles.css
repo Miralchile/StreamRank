@@ -249,3 +249,22 @@ footer a { margin-left: auto; font-size: 11px; font-weight: 800; }
   .funnel-stages { grid-template-columns: 1fr; }
   .funnel-col::before { content: "" !important; }
 }
+
+/* Research journey timeline */
+.journey-section { padding-bottom: 46px; }
+.journey-flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.journey-node { position: relative; padding: 18px 16px 20px; background: var(--surface); border-top: 3px solid var(--teal); }
+.journey-node small { color: var(--teal); font: 8px ui-monospace, monospace; letter-spacing: .13em; }
+.journey-node strong { display: block; margin-top: 8px; font-size: 14px; letter-spacing: -.01em; }
+.journey-node p { margin: 7px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.journey-node > span { display: block; color: var(--ink); font: 700 10px ui-monospace, monospace; line-height: 1.5; }
+.journey-node::after { content: "→"; position: absolute; right: -7px; top: 20px; z-index: 1; color: var(--teal); font-size: 12px; }
+.journey-node:last-child::after { content: ""; }
+@media (max-width: 1240px) {
+  .journey-flow { grid-template-columns: repeat(3, 1fr); }
+  .journey-node:nth-child(3)::after { content: ""; }
+}
+@media (max-width: 700px) {
+  .journey-flow { grid-template-columns: 1fr; }
+  .journey-node::after { content: "" !important; }
+}

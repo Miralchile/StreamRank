@@ -413,7 +413,7 @@ $("#menuButton").addEventListener("click", () => {
   $("#menuButton").setAttribute("aria-expanded", String(open));
 });
 
-const sections = ["data", "training", "evidence"].map((id) => document.getElementById(id));
+const sections = ["journey", "data", "training", "evidence"].map((id) => document.getElementById(id));
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
