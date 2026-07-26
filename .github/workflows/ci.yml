@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install CPU torch first so the ml extra never pulls CUDA wheels
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install package with all extras
+        run: pip install -e '.[ml,serving,streaming,dev]'
+
+      - name: Lint
+        run: |
+          ruff check src scripts tests
+          ruff format --check src scripts tests
+
+      - name: Unit and API tests
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+
+      - name: Real-log smoke experiment
+        run: PYTHONPATH=src python scripts/run_sequence_ranking.py --config configs/sequence_ranking_smoke.json
+
+      - name: Compile check
+        run: python -m compileall -q src scripts tests

@@ -13,7 +13,9 @@ try:
     from streamrank.serving.app import create_app
 
     FASTAPI_AVAILABLE = True
-except ImportError:
+except (ImportError, RuntimeError):
+    # starlette raises RuntimeError (not ImportError) when its test client
+    # dependency (httpx2) is missing; both cases mean "skip the API suite".
     FASTAPI_AVAILABLE = False
 
 

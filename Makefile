@@ -37,7 +37,7 @@ audit:
 # --- Quality gates --------------------------------------------------------------------
 
 preflight:
-	python -c 'import fastapi, httpx, redis; from kafka import KafkaProducer'
+	python -c 'import fastapi, redis; from kafka import KafkaProducer'
 
 test:
 	PYTHONPATH=src python -m unittest discover -s tests -v

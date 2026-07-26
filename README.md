@@ -1,5 +1,7 @@
 # StreamRank
 
+[![CI](https://github.com/Miralchile/StreamRank/actions/workflows/ci.yml/badge.svg)](https://github.com/Miralchile/StreamRank/actions/workflows/ci.yml)
+
 一个**单主线、可复现、可展示**的短视频推荐系统项目:在真实快手 KuaiRand 日志上做
 多目标序列精排实验,把离线胜出模型绑定进多阶段在线服务,并用前端完整展示
 数据 → 训练 → 验证 → 在线推荐的全过程。

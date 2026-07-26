@@ -165,9 +165,9 @@ def _train_one(
     }
 
 
-def run_experiment(config_path: str | Path) -> dict[str, Any]:
-    config_path = Path(config_path)
-    config = json.loads(config_path.read_text(encoding="utf-8"))
+def run_experiment(config: str | Path | dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(config, dict):
+        config = json.loads(Path(config).read_text(encoding="utf-8"))
     _seed_everything(int(config.get("seed", 2026)))
     output_dir = Path(config["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)

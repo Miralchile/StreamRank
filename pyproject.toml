@@ -14,7 +14,7 @@ dependencies = ["numpy>=1.24"]
 serving = ["fastapi>=0.110", "uvicorn>=0.27", "redis>=5.0"]
 streaming = ["kafka-python>=2.0"]
 ml = ["torch>=2.1"]
-dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.6"]
+dev = ["pytest>=8.0", "httpx2", "ruff>=0.6"]
 
 [project.scripts]
 streamrank = "streamrank.cli:main"
