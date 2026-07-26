@@ -9,6 +9,8 @@ COPY data/demo ./data/demo
 COPY data/processed ./data/processed
 COPY artifacts/benchmarks/kuairand-pure-sample.json ./artifacts/benchmarks/kuairand-pure-sample.json
 COPY artifacts/sequence-ranking-real ./artifacts/sequence-ranking-real
+COPY artifacts/transformer-comparison ./artifacts/transformer-comparison
+COPY artifacts/serving ./artifacts/serving
 COPY frontend ./frontend
 RUN pip install --no-cache-dir '.[serving,streaming,ml]'
 

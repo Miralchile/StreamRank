@@ -1,0 +1,15 @@
+{
+  "component": "model",
+  "version": "focused-autoint-kuairand-pure-v1",
+  "compatibility_key": "kuairand-pure-sample-schema-v1",
+  "config": {
+    "kind": "focused_ranker",
+    "architecture": "autoint",
+    "task_layer": "shared_bottom",
+    "artifact_path": "../../artifacts/serving/autoint-v1/artifact.json",
+    "artifact_sha256": "05c29456b592d20e2ea5f757c8cea5fcf16a077a950e93f325476a161b6182fa",
+    "checkpoint_path": "../../artifacts/serving/autoint-v1/autoint.pt",
+    "checkpoint_sha256": "e23a6220f6a0ae6f7ff8b6a8d21a7c7789fee74d09eac2be8937348e6e6fa12c",
+    "training_note": "offline-selected focused ranker bound to online serving rerank stage"
+  }
+}

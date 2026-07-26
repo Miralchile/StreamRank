@@ -81,3 +81,12 @@
   数据上唯一有统计支撑的结构增益。
 - 原生 macOS venv 建立,37 项测试原生全绿;修复 macOS /tmp 符号链接路径缺陷。
 - 部署仍为 DeepFM checkpoint;切换到 AutoInt 需声明新选型协议后另行发布。
+
+
+# 2026-07-26 发布:在线精排切换至 AutoInt
+
+- 声明新选型协议(六模型注意力谱系、同验证集规则、seed=2026),胜出的 AutoInt
+  checkpoint 提升为受版本管理的 serving 工件并重建 manifest;
+- 原生冒烟 + 37 项测试 + 发布压测(QPS 93.7 / p95 121ms,较 DeepFM 的推理成本
+  上升如实记录)+ docker 四服务重建;
+- 前端与全部文档同步至六模型叙事;回滚路径为上一份完整 manifest。

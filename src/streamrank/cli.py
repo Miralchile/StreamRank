@@ -42,6 +42,7 @@ def command_build_deployment(args: argparse.Namespace) -> int:
         args.root,
         catalog_path=args.catalog,
         policy_path=args.policy,
+        focused_artifact_path=args.artifact,
         manifest_name=args.name,
     )
     print(json.dumps({"manifest": str(manifest_path)}, indent=2))
@@ -80,6 +81,11 @@ def build_parser() -> argparse.ArgumentParser:
     deployment.add_argument("--root", default=".")
     deployment.add_argument("--catalog", required=True)
     deployment.add_argument("--policy", default="configs/serving_policy.json")
+    deployment.add_argument(
+        "--artifact",
+        default=None,
+        help="winning focused artifact.json to bind (defaults to sequence-ranking-real)",
+    )
     deployment.add_argument("--name", default="kuairand-pure-sample")
     deployment.set_defaults(func=command_build_deployment)
     download = subparsers.add_parser(

@@ -76,7 +76,7 @@ class ApiTests(unittest.TestCase):
 
         focused = self.client.get("/api/focused")
         self.assertEqual(focused.status_code, 200)
-        self.assertEqual(focused.json()["experiment"]["winner"], "deepfm")
+        self.assertEqual(focused.json()["experiment"]["winner"], "autoint")
         self.assertEqual(focused.json()["dataset"]["selected_users"], 5000)
         self.assertTrue(focused.json()["serving"]["offline_winner_bound"])
 

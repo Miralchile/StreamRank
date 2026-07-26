@@ -6,3 +6,8 @@
 **/*.pyc
 *.egg-info
 data/raw
+artifacts/transformer-comparison/*/*.pt
+artifacts/transformer-comparison/*/artifact.json
+artifacts/sequence-ranking-seeds
+artifacts/sequence-ranking-smoke
+_to_delete

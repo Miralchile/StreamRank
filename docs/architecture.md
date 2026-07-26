@@ -7,7 +7,7 @@ flowchart LR
     subgraph OFF[离线实验:单研究问题]
         A[KuaiRand-Pure 原始日志] --> B[确定性5k用户队列 prepare]
         B --> C[时间切分 + 请求桶内先预测后更新]
-        C --> D[DeepFM式 / DIN / DIN+MMoE 同协议训练]
+        C --> D[六模型注意力谱系同协议训练]
         D --> E[验证集GAUC选型 + 随机曝光偏差诊断]
         E --> F[胜出模型 artifact + checkpoint]
     end
@@ -31,8 +31,9 @@ flowchart LR
 
 ## 服务边界
 
-当前 serving bundle 实际运行 ItemCF + popularity 召回、RRF 融合、manifest 绑定的**离线胜出
-DeepFM checkpoint**(`FocusedServingRanker`)、identity calibrator 和 diversity reranker。
+当前 serving bundle 实际运行 ItemCF + popularity 召回、RRF 融合、manifest 绑定的**扩展
+六模型对照胜出的 AutoInt checkpoint**(`FocusedServingRanker`)、identity calibrator 和
+diversity reranker。
 `/recommend` 同时返回各阶段候选数,前端以漏斗形式展示召回 → 融合 → 精排 → 重排的收敛过程。
 
 重排 score 权重来自显式声明的 `configs/serving_policy.json`(pre-registered),本项目不声称

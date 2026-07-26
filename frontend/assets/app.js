@@ -5,12 +5,18 @@ const MODEL_LABELS = {
   deepfm: "特征交互排序（DeepFM）",
   din: "兴趣序列排序（DIN）",
   din_mmoe: "多任务专家排序（DIN + MMoE）",
+  sasrec: "因果自注意力排序（SASRec）",
+  bst: "序列注意力排序（BST）",
+  autoint: "特征注意力排序（AutoInt）",
 };
 
 const MODEL_DESCRIPTIONS = {
-  deepfm: "组合用户、视频、场景与历史统计，预测用户反馈。该版本在当前验证集上表现最好。",
-  din: "结合近期观看序列，判断候选视频是否符合用户当前兴趣。",
-  din_mmoe: "联合学习有效播放、长播、点赞和负反馈四个目标。",
+  deepfm: "组合用户、视频、场景与历史统计的隐式特征交叉基线。",
+  din: "目标注意力扫描近期观看序列，判断候选是否符合当前兴趣。",
+  din_mmoe: "在DIN之上用多专家结构分别学习四个反馈目标。",
+  sasrec: "因果自注意力自回归编码观看历史，候选在注意力之外交互。",
+  bst: "候选视频作为序列token参与自注意力，与历史直接交互。",
+  autoint: "多头注意力建模特征域之间的交互而非序列。该版本在验证集上跨seed一致胜出，已绑定为在线精排模型。",
 };
 
 const state = {
@@ -90,11 +96,18 @@ function renderDatasetView() {
 }
 
 function modelFlow(name) {
-  const sequence = name !== "deepfm";
+  const sequence = !["deepfm", "autoint"].includes(name);
+  const fieldAttention = name === "autoint";
   const mmoe = name === "din_mmoe";
+  const matchTitle = sequence ? "判断近期兴趣" : fieldAttention ? "特征相互注意" : "学习偏好关系";
+  const matchDetail = sequence
+    ? "当前视频是否符合最近兴趣"
+    : fieldAttention
+      ? "用户、视频、场景等特征域两两交互"
+      : "什么用户喜欢什么视频";
   const nodes = [
     ["01 / 输入", "用户与视频信息", "用户、视频、场景与历史统计"],
-    ["02 / 匹配", sequence ? "判断近期兴趣" : "学习偏好关系", sequence ? "当前视频是否符合最近兴趣" : "什么用户喜欢什么视频"],
+    ["02 / 匹配", matchTitle, matchDetail],
     ["03 / 学习", mmoe ? "多目标分别学习" : "共享用户偏好", mmoe ? "不同反馈使用不同专家" : "多个反馈共同训练"],
     ["04 / 输出", "预测用户反馈", "有效播放 · 长播 · 点赞 · 负反馈"],
   ];

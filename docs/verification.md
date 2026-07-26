@@ -1,5 +1,18 @@
 # 验证记录
 
+## 2026-07-26(第四轮)AutoInt 部署切换
+
+- 按新声明协议(六模型、同验证集选型规则、seed=2026)将在线精排从 DeepFM 切换
+  为 AutoInt:胜出 checkpoint 提升至 `artifacts/serving/autoint-v1/`(受版本管理),
+  `build-deployment --artifact` 重建 manifest,model descriptor 为
+  `focused-autoint-kuairand-pure-v1`,全部 SHA-256 校验通过。
+- 原生冒烟:bundle 加载 + 48.2 万事件拟合 8.1s + AutoInt 端到端推荐,输出有限、
+  trace 完整;37 项测试在新默认配置(六模型报告 + AutoInt manifest)下全绿。
+- 发布压测重跑:QPS 93.7 / p50 82ms / p95 121ms / 0 错误——较 DeepFM
+  (216 / 105ms)的推理成本上升如实记录,是结构收益与延迟的显式权衡。
+- 前端"训练与选型"区切换为六模型对照报告,新增 SASRec/BST/AutoInt 的标签、
+  说明与流程图;旧 DeepFM descriptor 保留作为回滚组件。
+
 ## 2026-07-26(第三轮)注意力谱系对照
 
 - 新增 SASRec式/BST式/AutoInt式三个协议内对照模型;`FocusedRanker` 扩展为五种

@@ -170,7 +170,7 @@ def create_app() -> FastAPI:
     focused_report_path = Path(
         os.getenv(
             "STREAMRANK_FOCUSED_REPORT",
-            root / "artifacts/sequence-ranking-real/report.json",
+            root / "artifacts/transformer-comparison/seed-2026/report.json",
         )
     )
     focused_dataset_path = Path(

@@ -12,7 +12,7 @@ KuaiRand日志
   → DeepFM式基线 / DIN / DIN+MMoE 同协议对照
   → 标准曝光测试 + 随机曝光偏差诊断
   → 胜出模型artifact(manifest绑定, SHA-256校验)
-  → ItemCF/热门召回 → RRF融合 → DeepFM多目标精排 → 多样性重排
+  → ItemCF/热门召回 → RRF融合 → AutoInt多目标精排 → 多样性重排
   → 前端漏斗展示 + 反馈事件经Kafka幂等更新Redis在线状态
 ```
 
@@ -74,7 +74,7 @@ open http://localhost:18000/
 
 前端按 HR/面试官可读的方式展示三段证据:真实训练数据与时间切分、三模型训练对照与
 选型、离线测试与分布变化诊断;最后是在线推荐演示——选择真实用户调用 `/recommend`,
-页面用**多阶段漏斗**展示每一层候选数(ItemCF/热门召回 → RRF融合 → DeepFM精排 →
+页面用**多阶段漏斗**展示每一层候选数(ItemCF/热门召回 → RRF融合 → AutoInt精排 →
 多样性重排 Top-K),并可模拟一次长播反馈:事件发布到 Kafka/Redpanda,以同一 event id
 幂等写入在线状态,再刷新推荐观察变化。
 
@@ -120,8 +120,8 @@ open http://localhost:18000/
 
 因此本项目的结论是:**在Pure的候选池内历史上,三种结构的离线选型指标统计不可分,
 序列注意力与多任务专家结构没有带来可分辨的提升,单次训练的"胜出"由随机种子决定**。
-在线部署沿用预注册协议在seed=2026下选出的DeepFM checkpoint;这一选择的依据是
-协议一致性与结构最简,不是性能优势。完整区间与逐seed数字见
+(部署历史:该三模型协议曾选出seed=2026的DeepFM checkpoint并上线;后续扩展
+对照发现更强结构后,部署已按下节声明的新协议切换。)完整区间与逐seed数字见
 [`artifacts/sequence-ranking-real/comparison.json`](artifacts/sequence-ranking-real/comparison.json)。
 该结果支持"模型复杂度必须匹配数据可观测性"的判断,但不能证明DIN本身无效;严格
 序列结论需在KuaiRand-1K上复验。
@@ -151,8 +151,11 @@ DeepFM(bootstrap Δ=+0.0090,95% CI [+0.0028, +0.0152]),BST式与DeepFM/DIN不可
 0.7240),即特征域注意力改善的是用户内排序而非全局区分。AutoInt的best epoch触及
 训练上限(8/8),当前数字可能低估其收益。
 
-在线服务仍绑定原三模型实验预注册协议下的DeepFM checkpoint;将部署切换到扩展对照
-的胜者属于新的发布决策,应先声明新的选型协议、重建manifest并回归压测后执行。
+基于该结果声明新的部署选型协议——六模型、同一验证集选型规则、seed=2026——并已
+按此把在线服务切换到AutoInt checkpoint:manifest全量重建(模型descriptor为
+`focused-autoint-kuairand-pure-v1`),回归压测随发布重跑,前端"训练与选型"区
+同步展示六模型对照。切换依据是跨seed一致的用户级GAUC优势;若后续证据翻转,
+回滚路径是上一份完整manifest。
 
 随机曝光上主任务指标明显下降,这说明标准日志效果包含logging-policy分布信息。它是偏差
 诊断证据,不是新策略在线收益。
@@ -219,7 +222,7 @@ scripts/                # 实验入口、统计对比(bootstrap/多seed)、召�
   特征域注意力(AutoInt式)有跨seed一致的用户级GAUC提升;
 - 量化召回各路与融合的recall/覆盖率,以及重排的多样性-分数权衡,包括"朴素RRF
   低于单路ItemCF"这一负结果;
-- 将离线胜出的DeepFM checkpoint接入在线推荐服务,并通过前端漏斗展示
+- 将扩展对照胜出的AutoInt checkpoint按声明协议接入在线推荐服务,并通过前端漏斗展示
   召回/融合/精排/重排与反馈更新链路;
 - 召回→精排→重排→在线反馈的工程与评测方法可平移到搜索、广告排序场景。
 
