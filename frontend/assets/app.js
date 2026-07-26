@@ -209,15 +209,19 @@ async function loadHealth() {
   $("#recommendState").textContent = "服务就绪；结果来自当前在线deployment";
 }
 
-const RANKER_STAGE_NAMES = {
-  deepfm: "DeepFM 多目标打分",
-  din: "DIN 多目标打分",
-  din_mmoe: "DIN+MMoE 多目标打分",
-  sasrec: "SASRec 多目标打分",
-  bst: "BST 多目标打分",
-  autoint: "AutoInt 多目标打分",
-  heuristic: "启发式多目标打分",
+const ARCH_DISPLAY = {
+  deepfm: "DeepFM",
+  din: "DIN",
+  din_mmoe: "DIN+MMoE",
+  sasrec: "SASRec",
+  bst: "BST",
+  autoint: "AutoInt",
+  heuristic: "启发式",
 };
+
+const RANKER_STAGE_NAMES = Object.fromEntries(
+  Object.entries(ARCH_DISPLAY).map(([key, label]) => [key, `AI 逐条预测行为（${label}）`])
+);
 
 function renderPipeline(data) {
   const funnel = $("#pipelineFunnel");
@@ -232,17 +236,17 @@ function renderPipeline(data) {
     || "多目标打分";
   const columns = [
     { kind: "recall", cells: [
-      { eyebrow: "召回 A", name: "ItemCF 协同过滤", count: byStage.recall_itemcf },
-      { eyebrow: "召回 B", name: "热门 / 类目", count: byStage.recall_popularity },
+      { eyebrow: "召回 A", name: "看过相似视频的人还在看（ItemCF）", count: byStage.recall_itemcf },
+      { eyebrow: "召回 B", name: "TA 偏好类目里的热门（Popularity）", count: byStage.recall_popularity },
     ] },
-    { kind: "stage", cells: [{ eyebrow: "融合", name: "RRF 去重合并", count: byStage.fusion }] },
+    { kind: "stage", cells: [{ eyebrow: "融合", name: "两路合并、去掉重复（RRF）", count: byStage.fusion }] },
     { kind: "stage", cells: [{ eyebrow: "精排", name: rankerName, count: byStage.ranking }] },
-    { kind: "stage", cells: [{ eyebrow: "重排", name: "多样性约束 Top-K", count: byStage.rerank }] },
+    { kind: "stage", cells: [{ eyebrow: "重排", name: "避免同类扎堆,取最终榜单", count: byStage.rerank }] },
   ];
   const maxCount = Math.max(1, ...pipeline.stages.map((item) => Number(item.count) || 0));
   funnel.hidden = false;
   $("#funnelMeta").textContent =
-    `可推荐候选池 ${formatNumber(pipeline.catalog_size)} · 已看历史过滤 ${formatNumber(pipeline.excluded_seen)} · 每阶段候选数`;
+    `全库 ${formatNumber(pipeline.catalog_size)} 个视频 · 已排除 TA 看过的 ${formatNumber(pipeline.excluded_seen)} 个 · 每一步剩下多少,一目了然`;
   $("#funnelStages").innerHTML = columns.map((column) => `
     <div class="funnel-col${column.kind === "recall" ? " recall" : ""}">
       ${column.cells.map((cell) => `
@@ -255,7 +259,7 @@ function renderPipeline(data) {
     </div>`).join("");
 }
 
-const TASK_CHIP_LABELS = { is_click: "点击", long_view: "长播", is_like: "点赞", is_hate: "负反" };
+const TASK_CHIP_LABELS = { is_click: "点击", long_view: "看完", is_like: "点赞", is_hate: "不喜欢" };
 
 function probChips(features) {
   return Object.entries(TASK_CHIP_LABELS).map(([task, label]) => {
@@ -279,15 +283,15 @@ function renderScoreFormula(data) {
   const weights = data.score_policy?.weights;
   const target = $("#scoreFormula");
   if (!weights) { target.textContent = ""; return; }
-  const names = { is_click: "点击", long_view: "长播", is_like: "点赞", is_hate: "负反馈", freshness: "新鲜度" };
+  const names = { is_click: "点击", long_view: "看完", is_like: "点赞", is_hate: "不喜欢", freshness: "新鲜度" };
   const parts = [];
   Object.entries(names).forEach(([key, label]) => {
     const weight = Number(weights[key]);
     if (!Number.isFinite(weight) || weight === 0) return;
     const sign = weight < 0 ? "− " : parts.length ? "+ " : "";
-    parts.push(`${sign}${Math.abs(weight)}·${label}概率`);
+    parts.push(`${sign}${Math.abs(weight)}×${label}`);
   });
-  target.textContent = `排序分 = ${parts.join(" ")} —— 部署 manifest 中显式声明的产品权重`;
+  target.textContent = `每条视频的排序分 = ${parts.join(" ")}("不喜欢"是减分项;权重是显式声明的产品决策)`;
 }
 
 async function loadMetrics(clientMs) {
@@ -298,14 +302,16 @@ async function loadMetrics(clientMs) {
       const [key, value] = line.split(" ");
       if (key) values[key] = Number(value);
     });
-    const fmt = (value, digits = 1) => (Number.isFinite(value) ? value.toFixed(digits) : "—");
+    const fmt = (value) => (Number.isFinite(value) ? value.toFixed(0) : "—");
     const target = $("#liveMetrics");
     target.hidden = false;
     const bits = [];
-    if (Number.isFinite(clientMs)) bits.push(`本次请求端到端 ${clientMs.toFixed(0)}ms`);
-    bits.push(`引擎延迟 p50 ${fmt(values.streamrank_latency_p50_ms)}ms / p95 ${fmt(values.streamrank_latency_p95_ms)}ms / p99 ${fmt(values.streamrank_latency_p99_ms)}ms`);
-    bits.push(`累计请求 ${formatNumber(values.streamrank_requests_total)}`);
-    bits.push(`降级 ${formatNumber(values.streamrank_degraded_total)}`);
+    if (Number.isFinite(clientMs)) bits.push(`这次推荐花了 ${clientMs.toFixed(0)}ms`);
+    bits.push(`引擎延迟:一半请求快于 ${fmt(values.streamrank_latency_p50_ms)}ms,95% 快于 ${fmt(values.streamrank_latency_p95_ms)}ms`);
+    bits.push(`启动以来共 ${formatNumber(values.streamrank_requests_total)} 次请求`);
+    if (Number(values.streamrank_degraded_total) > 0) {
+      bits.push(`降级 ${formatNumber(values.streamrank_degraded_total)} 次`);
+    }
     target.textContent = bits.join("  ·  ");
   } catch (error) {
     /* metrics strip is best-effort; never break the demo flow */
@@ -333,12 +339,11 @@ function renderRecommendation(data, options = {}) {
         <code>${formatNumber(item.score, 5)}</code>
       </article>`;
   }).join("") : '<p class="empty">当前用户没有可返回的未看候选。</p>';
-  const ranker = data.ranker?.architecture
-    ? `${data.ranker.architecture} 在线排序`
-    : `${data.ranker?.kind || "unknown"} 在线排序`;
+  const archKey = data.ranker?.architecture || data.ranker?.kind;
+  const ranker = `${ARCH_DISPLAY[archKey] || archKey || "unknown"} 模型在线打分`;
   $("#recommendState").textContent = data.personalization_mode === "history-aware"
-    ? `已使用 ${data.history_size} 条历史行为 · ${ranker} · ${data.deployment_id}`
-    : `无历史用户，使用热门回退 · ${ranker} · ${data.deployment_id}`;
+    ? `基于 TA 的 ${data.history_size} 条观看历史 · ${ranker} · 部署 ${data.deployment_id}`
+    : `TA 没有历史记录,先推热门 · ${ranker} · 部署 ${data.deployment_id}`;
 }
 
 async function submitRecommendation(form, fromFeedback = false) {
@@ -420,7 +425,7 @@ $("#recommendForm").addEventListener("submit", async (event) => {
   $("#recommendState").textContent = "正在调用当前在线推荐服务…";
   try {
     await submitRecommendation(form);
-    $("#feedbackState").textContent = "可对首个推荐结果模拟长播反馈。";
+    $("#feedbackState").textContent = "点击下方按钮,假装 TA 看完了第 1 条视频,看榜单如何变化。";
   } catch (error) {
     $("#recommendState").textContent = error.message;
     toast(error.message, true);
@@ -462,7 +467,7 @@ $("#feedbackButton").addEventListener("click", async () => {
     });
     formElement.querySelector("input[name=query_time_ms]").value = String(eventTime + 1);
     await submitRecommendation(new FormData(formElement), true);
-    $("#feedbackState").textContent = `已消费视频 ${item.item_id} 的长播反馈，并刷新推荐;右侧标记显示排名变化。`;
+    $("#feedbackState").textContent = `系统已记下"TA 看完了视频 ${item.item_id}",榜单随即更新——每条右侧的标记显示变化。`;
   } catch (error) {
     $("#feedbackState").textContent = error.message;
     toast(error.message, true);

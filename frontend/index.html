@@ -158,16 +158,16 @@
         <div class="loop-lab">
           <div class="loop-heading">
             <div><p class="eyebrow">在线推荐演示</p><h3>在线推荐</h3></div>
-            <p>选择真实用户，调用在线服务，观察排序与反馈更新。</p>
+            <p>选一位真实用户,看系统此刻推什么、每条分数怎么来,以及一次反馈如何立刻改变榜单。</p>
           </div>
           <div class="loop-status" id="loopStatus"></div>
           <div class="loop-grid">
             <form class="panel compact-form" id="recommendForm">
-              <div class="panel-head"><div><small>推荐请求</small><h3>选择用户</h3></div><span id="deploymentId">—</span></div>
+              <div class="panel-head"><div><small>推荐请求</small><h3>为谁推荐?</h3></div><span id="deploymentId">—</span></div>
               <label>真实演示用户<select name="user_id" id="servingUserSelect" required><option value="">正在读取用户画像…</option></select></label>
               <p class="profile-summary" id="selectedProfileSummary">正在读取用户历史…</p>
               <p class="input-help">仅展示有历史行为的用户；无历史用户将回退到热门推荐。</p>
-              <label>推荐场景
+              <label>推荐场景(日志中的分流字段)
                 <select name="tab">
                   <option value="0">场景 0</option>
                   <option value="1">场景 1</option>
@@ -181,7 +181,7 @@
               <p class="form-status" id="recommendState">等待服务就绪</p>
             </form>
             <div class="panel live-results">
-              <div class="panel-head"><div><small>接口返回</small><h3>推荐结果</h3></div><span>分数从高到低</span></div>
+              <div class="panel-head"><div><small>接口实时返回</small><h3>此刻会推给 TA 的视频</h3></div><span>按排序分从高到低</span></div>
               <div class="pipeline-funnel" id="pipelineFunnel" hidden aria-label="多阶段推荐漏斗">
                 <div class="funnel-meta" id="funnelMeta"></div>
                 <div class="funnel-stages" id="funnelStages"></div>
@@ -191,7 +191,7 @@
               <div class="live-metrics" id="liveMetrics" hidden></div>
               <div class="feedback-action">
                 <button class="button secondary full" id="feedbackButton" type="button" disabled>模拟长播反馈并刷新 <span>↻</span></button>
-                <p id="feedbackState">反馈后会写入在线用户状态，再重新排序。</p>
+                <p id="feedbackState">点击后:系统记下"TA 看完了第 1 条视频",并立刻重新生成推荐。</p>
               </div>
             </div>
           </div>
