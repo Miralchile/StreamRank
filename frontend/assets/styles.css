@@ -250,21 +250,23 @@ footer a { margin-left: auto; font-size: 11px; font-weight: 800; }
   .funnel-col::before { content: "" !important; }
 }
 
-/* Research journey timeline */
-.journey-section { padding-bottom: 46px; }
-.journey-flow { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
-.journey-node { position: relative; padding: 18px 16px 20px; background: var(--surface); border-top: 3px solid var(--teal); }
-.journey-node small { color: var(--teal); font: 8px ui-monospace, monospace; letter-spacing: .13em; }
-.journey-node strong { display: block; margin-top: 8px; font-size: 14px; letter-spacing: -.01em; }
-.journey-node p { margin: 7px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.5; }
-.journey-node > span { display: block; color: var(--ink); font: 700 10px ui-monospace, monospace; line-height: 1.5; }
-.journey-node::after { content: "→"; position: absolute; right: -7px; top: 20px; z-index: 1; color: var(--teal); font-size: 12px; }
-.journey-node:last-child::after { content: ""; }
-@media (max-width: 1240px) {
-  .journey-flow { grid-template-columns: repeat(3, 1fr); }
-  .journey-node:nth-child(3)::after { content: ""; }
-}
-@media (max-width: 700px) {
-  .journey-flow { grid-template-columns: 1fr; }
-  .journey-node::after { content: "" !important; }
-}
+/* Per-item multi-objective probability chips */
+.result-item > div { min-width: 0; }
+.prob-row { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.prob-chip { display: inline-flex; align-items: center; gap: 5px; }
+.prob-chip b { font-size: 8.5px; font-weight: 700; color: var(--muted); }
+.prob-chip .prob-bar { width: 52px; height: 5px; background: var(--paper); border: 1px solid var(--line); }
+.prob-chip .prob-bar i { display: block; height: 100%; background: var(--teal); }
+.prob-chip.hate .prob-bar i { background: var(--orange); }
+.prob-chip small { font: 700 8.5px ui-monospace, monospace; color: var(--ink); }
+
+/* Feedback rank-change badges */
+.delta { margin-left: 8px; padding: 1px 6px; font: 700 8.5px ui-monospace, monospace; font-style: normal; vertical-align: 2px; }
+.delta.new { background: var(--acid); color: var(--ink); }
+.delta.up { background: rgba(23, 111, 93, .12); color: var(--teal); }
+.delta.down { background: rgba(231, 111, 67, .14); color: var(--orange); }
+.delta.same { background: var(--paper); color: var(--muted); }
+
+/* Score policy formula + live service metrics */
+.score-formula { margin: 0 0 12px; min-height: 14px; color: var(--muted); font: 10px ui-monospace, monospace; letter-spacing: .03em; }
+.live-metrics { margin-top: 12px; padding: 9px 12px; background: var(--paper); border: 1px solid var(--line); color: var(--muted); font: 10px ui-monospace, monospace; }

@@ -318,6 +318,7 @@ def create_app() -> FastAPI:
                     {"stage": "rerank", "count": trace.get("returned", 0)},
                 ],
             },
+            "score_policy": {"weights": rerank_config.get("score_weights", {})},
             "history_size": history_size,
             "personalization_mode": (
                 "history-aware" if history_size else "cold-start-popularity-fallback"

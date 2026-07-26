@@ -255,19 +255,81 @@ function renderPipeline(data) {
     </div>`).join("");
 }
 
-function renderRecommendation(data) {
+const TASK_CHIP_LABELS = { is_click: "点击", long_view: "长播", is_like: "点赞", is_hate: "负反" };
+
+function probChips(features) {
+  return Object.entries(TASK_CHIP_LABELS).map(([task, label]) => {
+    const value = Number(features[task]);
+    if (!Number.isFinite(value)) return "";
+    const width = Math.max(3, Math.round(value * 100));
+    return `<span class="prob-chip${task === "is_hate" ? " hate" : ""}"><b>${label}</b><span class="prob-bar"><i style="width:${width}%"></i></span><small>${(value * 100).toFixed(1)}%</small></span>`;
+  }).join("");
+}
+
+function deltaBadge(item, index, previous) {
+  if (!previous) return "";
+  const prevIndex = previous.findIndex((entry) => entry.item_id === item.item_id);
+  if (prevIndex === -1) return '<em class="delta new">新进入</em>';
+  if (prevIndex === index) return '<em class="delta same">持平</em>';
+  const moved = prevIndex - index;
+  return `<em class="delta ${moved > 0 ? "up" : "down"}">${moved > 0 ? "↑" : "↓"}${Math.abs(moved)}</em>`;
+}
+
+function renderScoreFormula(data) {
+  const weights = data.score_policy?.weights;
+  const target = $("#scoreFormula");
+  if (!weights) { target.textContent = ""; return; }
+  const names = { is_click: "点击", long_view: "长播", is_like: "点赞", is_hate: "负反馈", freshness: "新鲜度" };
+  const parts = [];
+  Object.entries(names).forEach(([key, label]) => {
+    const weight = Number(weights[key]);
+    if (!Number.isFinite(weight) || weight === 0) return;
+    const sign = weight < 0 ? "− " : parts.length ? "+ " : "";
+    parts.push(`${sign}${Math.abs(weight)}·${label}概率`);
+  });
+  target.textContent = `排序分 = ${parts.join(" ")} —— 部署 manifest 中显式声明的产品权重`;
+}
+
+async function loadMetrics(clientMs) {
+  try {
+    const text = await request("/metrics");
+    const values = {};
+    String(text).split("\n").forEach((line) => {
+      const [key, value] = line.split(" ");
+      if (key) values[key] = Number(value);
+    });
+    const fmt = (value, digits = 1) => (Number.isFinite(value) ? value.toFixed(digits) : "—");
+    const target = $("#liveMetrics");
+    target.hidden = false;
+    const bits = [];
+    if (Number.isFinite(clientMs)) bits.push(`本次请求端到端 ${clientMs.toFixed(0)}ms`);
+    bits.push(`引擎延迟 p50 ${fmt(values.streamrank_latency_p50_ms)}ms / p95 ${fmt(values.streamrank_latency_p95_ms)}ms / p99 ${fmt(values.streamrank_latency_p99_ms)}ms`);
+    bits.push(`累计请求 ${formatNumber(values.streamrank_requests_total)}`);
+    bits.push(`降级 ${formatNumber(values.streamrank_degraded_total)}`);
+    target.textContent = bits.join("  ·  ");
+  } catch (error) {
+    /* metrics strip is best-effort; never break the demo flow */
+  }
+}
+
+function renderRecommendation(data, options = {}) {
+  const previous = options.fromFeedback ? options.previous : null;
   state.lastRecommendation = data;
   $("#feedbackButton").disabled = !data.items.length;
   renderPipeline(data);
+  renderScoreFormula(data);
   $("#recommendResults").innerHTML = data.items.length ? data.items.map((item, index) => {
     const features = item.features || {};
     const source = escapeHtml((item.sources || []).join(" + ") || "fallback");
-    const longView = Number(features.long_view);
     const category = features.category ? `类目 ${escapeHtml(String(features.category).replace(/^tag:/, ""))}` : "类目未知";
     return `
       <article class="result-item">
         <span>#${String(index + 1).padStart(2, "0")}</span>
-        <div><strong>视频 ${escapeHtml(item.item_id)}</strong><small>${source} · ${category} · 长播概率 ${formatPercent(longView, 1)}</small></div>
+        <div>
+          <strong>视频 ${escapeHtml(item.item_id)}</strong>${deltaBadge(item, index, previous)}
+          <small>${source} · ${category}</small>
+          <div class="prob-row">${probChips(features)}</div>
+        </div>
         <code>${formatNumber(item.score, 5)}</code>
       </article>`;
   }).join("") : '<p class="empty">当前用户没有可返回的未看候选。</p>';
@@ -279,14 +341,18 @@ function renderRecommendation(data) {
     : `无历史用户，使用热门回退 · ${ranker} · ${data.deployment_id}`;
 }
 
-async function submitRecommendation(form) {
+async function submitRecommendation(form, fromFeedback = false) {
+  const previous = state.lastRecommendation?.items || null;
   const params = new URLSearchParams({
     top_k: form.get("top_k"),
     query_time_ms: form.get("query_time_ms"),
     tab: form.get("tab") || "0",
   });
+  const started = performance.now();
   const data = await request(`/recommend/${encodeURIComponent(form.get("user_id"))}?${params}`);
-  renderRecommendation(data);
+  const clientMs = performance.now() - started;
+  renderRecommendation(data, { fromFeedback, previous });
+  loadMetrics(clientMs);
   return data;
 }
 
@@ -395,8 +461,8 @@ $("#feedbackButton").addEventListener("click", async () => {
       }),
     });
     formElement.querySelector("input[name=query_time_ms]").value = String(eventTime + 1);
-    await submitRecommendation(new FormData(formElement));
-    $("#feedbackState").textContent = `已消费视频 ${item.item_id} 的长播反馈，并刷新推荐。`;
+    await submitRecommendation(new FormData(formElement), true);
+    $("#feedbackState").textContent = `已消费视频 ${item.item_id} 的长播反馈，并刷新推荐;右侧标记显示排名变化。`;
   } catch (error) {
     $("#feedbackState").textContent = error.message;
     toast(error.message, true);
@@ -413,7 +479,7 @@ $("#menuButton").addEventListener("click", () => {
   $("#menuButton").setAttribute("aria-expanded", String(open));
 });
 
-const sections = ["journey", "data", "training", "evidence"].map((id) => document.getElementById(id));
+const sections = ["data", "training", "evidence"].map((id) => document.getElementById(id));
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;

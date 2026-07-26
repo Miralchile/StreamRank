@@ -51,6 +51,9 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(stages["rerank"], len(response.json()["items"]))
         self.assertGreaterEqual(stages["fusion"], stages["rerank"])
         self.assertGreater(pipeline["catalog_size"], 0)
+        weights = response.json()["score_policy"]["weights"]
+        self.assertLessEqual(weights["is_hate"], 0)
+        self.assertGreater(weights["is_click"], 0)
 
     def test_dashboard_and_curated_project_endpoints(self):
         dashboard = self.client.get("/")
@@ -65,8 +68,8 @@ class ApiTests(unittest.TestCase):
         self.assertIn('name="history_length" type="number"', dashboard.text)
         self.assertIn("模拟长播反馈并刷新", dashboard.text)
         self.assertIn('id="pipelineFunnel"', dashboard.text)
-        self.assertIn('id="journey"', dashboard.text)
-        self.assertIn("研究历程", dashboard.text)
+        self.assertIn('id="liveMetrics"', dashboard.text)
+        self.assertIn('id="scoreFormula"', dashboard.text)
         stylesheet = self.client.get("/assets/styles.css")
         self.assertEqual(stylesheet.status_code, 200)
         self.assertIn("--acid", stylesheet.text)
