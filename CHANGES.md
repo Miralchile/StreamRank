@@ -69,3 +69,15 @@
 4. **召回/重排评测**:`evaluation/recall.py` + `make recall-eval`,时间正确的
    next-positive 协议;量化三路召回与融合的 Recall@K/HitRate/覆盖率、重排的
    多样性-分数权衡;如实报告"朴素 RRF 低于单路 ItemCF"的负结果。
+
+
+# 2026-07-26 注意力谱系扩展(LLM相关骨架的协议内检验)
+
+- 新增三个小规模 Transformer 对照:SASRec式(因果自注意力)、BST式(候选参与
+  序列注意力)、AutoInt式(特征域注意力,非序列),全部复用既有协议、参数量级
+  与统计纪律;smoke/CI 同步覆盖六模型。
+- 结果:序列自注意力无优势(SASRec 显著差于 DeepFM),非序列的特征域注意力
+  3/3 seed 一致胜出(0.6431±0.0031)——"注意力放在特征交互而非序列上"是该
+  数据上唯一有统计支撑的结构增益。
+- 原生 macOS venv 建立,37 项测试原生全绿;修复 macOS /tmp 符号链接路径缺陷。
+- 部署仍为 DeepFM checkpoint;切换到 AutoInt 需声明新选型协议后另行发布。

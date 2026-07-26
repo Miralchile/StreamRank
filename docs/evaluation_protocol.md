@@ -39,6 +39,13 @@ GAUC = Σ valid_user impressions(user) × AUC(user) / Σ valid_user impressions(
 仅保留同时有正负样本的用户。稀有标签在部分切片上没有双类样本时,指标显式置为 null,
 不允许 NaN 混入报告。
 
+## 架构谱系
+
+对照覆盖六种同参数量级(389k–427k)的结构:隐式特征交叉(DeepFM式)、特征域
+自注意力(AutoInt式,非序列)、目标注意力(DIN,含MMoE变体)、因果自注意力
+(SASRec式)与候选参与的序列自注意力(BST式)。谱系对照的全部模型在同一环境、
+同一协议下逐seed重训,跨环境的浮点差异不进入同一张对照表。
+
 ## 统计支撑
 
 模型对照差距用两种互补方式量化(`scripts/compare_models.py`):用户级配对

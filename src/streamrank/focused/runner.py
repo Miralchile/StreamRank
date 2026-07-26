@@ -91,6 +91,8 @@ def _train_one(
         embedding_dim=int(spec.get("embedding_dim", 32)),
         hidden_dim=int(spec.get("hidden_dim", 64)),
         num_experts=int(spec.get("num_experts", 4)),
+        num_heads=int(spec.get("num_heads", 2)),
+        num_layers=int(spec.get("num_layers", 2)),
     ).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),

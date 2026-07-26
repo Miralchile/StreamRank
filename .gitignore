@@ -21,3 +21,5 @@ _to_delete/
 
 # Per-seed rerun outputs (only the aggregated comparison.json is committed)
 artifacts/sequence-ranking-seeds/
+artifacts/transformer-comparison/*/*.pt
+artifacts/transformer-comparison/*/artifact.json

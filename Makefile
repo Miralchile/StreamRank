@@ -65,3 +65,6 @@ compare-models:
 
 recall-eval:
 	PYTHONPATH=src python scripts/evaluate_recall.py
+
+rank-transformers:
+	PYTHONPATH=src python scripts/run_sequence_ranking.py --config configs/transformer_comparison.json

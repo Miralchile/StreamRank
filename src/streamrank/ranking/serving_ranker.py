@@ -75,6 +75,8 @@ class FocusedServingRanker:
             embedding_dim=int(model_spec.get("embedding_dim", 32)),
             hidden_dim=int(model_spec.get("hidden_dim", 64)),
             num_experts=int(model_spec.get("num_experts", 4)),
+            num_heads=int(model_spec.get("num_heads", 2)),
+            num_layers=int(model_spec.get("num_layers", 2)),
         )
         import torch
 

@@ -200,6 +200,9 @@ const RANKER_STAGE_NAMES = {
   deepfm: "DeepFM 多目标打分",
   din: "DIN 多目标打分",
   din_mmoe: "DIN+MMoE 多目标打分",
+  sasrec: "SASRec 多目标打分",
+  bst: "BST 多目标打分",
+  autoint: "AutoInt 多目标打分",
   heuristic: "启发式多目标打分",
 };
 

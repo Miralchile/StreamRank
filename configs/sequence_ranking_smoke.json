@@ -16,9 +16,49 @@
     "test_end": "2022-05-09T00:00:00+08:00"
   },
   "models": {
-    "deepfm": {"architecture": "deepfm", "task_layer": "shared_bottom", "embedding_dim": 16, "hidden_dim": 32},
-    "din": {"architecture": "din", "task_layer": "shared_bottom", "embedding_dim": 16, "hidden_dim": 32},
-    "din_mmoe": {"architecture": "din", "task_layer": "mmoe", "embedding_dim": 16, "hidden_dim": 32, "num_experts": 4}
+    "deepfm": {
+      "architecture": "deepfm",
+      "task_layer": "shared_bottom",
+      "embedding_dim": 16,
+      "hidden_dim": 32
+    },
+    "din": {
+      "architecture": "din",
+      "task_layer": "shared_bottom",
+      "embedding_dim": 16,
+      "hidden_dim": 32
+    },
+    "din_mmoe": {
+      "architecture": "din",
+      "task_layer": "mmoe",
+      "embedding_dim": 16,
+      "hidden_dim": 32,
+      "num_experts": 4
+    },
+    "sasrec": {
+      "architecture": "sasrec",
+      "task_layer": "shared_bottom",
+      "embedding_dim": 16,
+      "hidden_dim": 32,
+      "num_heads": 2,
+      "num_layers": 1
+    },
+    "bst": {
+      "architecture": "bst",
+      "task_layer": "shared_bottom",
+      "embedding_dim": 16,
+      "hidden_dim": 32,
+      "num_heads": 2,
+      "num_layers": 1
+    },
+    "autoint": {
+      "architecture": "autoint",
+      "task_layer": "shared_bottom",
+      "embedding_dim": 16,
+      "hidden_dim": 32,
+      "num_heads": 2,
+      "num_layers": 1
+    }
   },
   "training": {
     "device": "cpu",
@@ -26,7 +66,12 @@
     "patience": 2,
     "batch_size": 512,
     "learning_rate": 0.001,
-    "weight_decay": 0.00001,
-    "task_weights": {"is_click": 1.0, "long_view": 1.0, "is_like": 0.2, "is_hate": 0.05}
+    "weight_decay": 1e-05,
+    "task_weights": {
+      "is_click": 1.0,
+      "long_view": 1.0,
+      "is_like": 0.2,
+      "is_hate": 0.05
+    }
   }
 }

@@ -52,7 +52,10 @@ def build_serving_deployment(
     catalog_path = Path(catalog_path).resolve()
     policy_path = Path(policy_path)
     if not policy_path.is_absolute():
-        policy_path = (root / policy_path).resolve()
+        policy_path = root / policy_path
+    # resolve unconditionally: on macOS /tmp is a symlink to /private/tmp, and an
+    # unresolved absolute path would fail relative_to() against the resolved root.
+    policy_path = policy_path.resolve()
     if not catalog_path.is_file() or not policy_path.is_file():
         raise FileNotFoundError("catalog and serving policy config must exist")
     policy = json.loads(policy_path.read_text(encoding="utf-8"))

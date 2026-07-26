@@ -1,5 +1,19 @@
 # 验证记录
 
+## 2026-07-26(第三轮)注意力谱系对照
+
+- 新增 SASRec式/BST式/AutoInt式三个协议内对照模型;`FocusedRanker` 扩展为五种
+  编码器路由,serving 侧同步支持部署任意架构。
+- 本机建立原生 venv(python3.13 + macOS arm64 torch):**37 项测试首次在原生
+  macOS 全部执行并通过**,并捕获一个仅在 macOS 暴露的真实缺陷(`/tmp` 为
+  `/private/tmp` 符号链接导致 build.py 的 `relative_to` 失败,已修复)。
+- 3 seed × 6 模型全部原生重训(同一环境保证可比):AutoInt式 3/3 seed 胜出,
+  验证选型GAUC均值 0.6431±0.0031;SASRec式显著差于 DeepFM(bootstrap CI
+  [+0.0028, +0.0152]);BST式与 DeepFM/DIN 不可分。逐seed报告与bootstrap汇总
+  见 artifacts/transformer-comparison/comparison.json。
+- 在线部署未变更(仍为预注册协议下的 seed-2026 DeepFM checkpoint);切换部署
+  属于独立发布决策。
+
 ## 2026-07-26(第二轮)完善验证
 
 - **全部 33 项测试首次在完整依赖环境实际执行并通过**(本机 docker 镜像,

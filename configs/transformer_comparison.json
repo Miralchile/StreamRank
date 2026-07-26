@@ -1,0 +1,29 @@
+{
+  "seed": 2026,
+  "input_csv": "data/processed/kuairand-pure-5k/interactions.csv",
+  "output_dir": "artifacts/transformer-comparison/seed-2026",
+  "max_history": 50,
+  "request_group_window_ms": 1000,
+  "splits": {
+    "train_end": "2022-04-22T00:00:00+08:00",
+    "validation_end": "2022-05-01T00:00:00+08:00",
+    "test_end": "2022-05-09T00:00:00+08:00"
+  },
+  "models": {
+    "deepfm": {"architecture": "deepfm", "task_layer": "shared_bottom", "embedding_dim": 32, "hidden_dim": 64},
+    "din": {"architecture": "din", "task_layer": "shared_bottom", "embedding_dim": 32, "hidden_dim": 64},
+    "din_mmoe": {"architecture": "din", "task_layer": "mmoe", "embedding_dim": 32, "hidden_dim": 64, "num_experts": 4},
+    "sasrec": {"architecture": "sasrec", "task_layer": "shared_bottom", "embedding_dim": 32, "hidden_dim": 64, "num_heads": 2, "num_layers": 2},
+    "bst": {"architecture": "bst", "task_layer": "shared_bottom", "embedding_dim": 32, "hidden_dim": 64, "num_heads": 2, "num_layers": 2},
+    "autoint": {"architecture": "autoint", "task_layer": "shared_bottom", "embedding_dim": 32, "hidden_dim": 64, "num_heads": 2, "num_layers": 2}
+  },
+  "training": {
+    "device": "cpu",
+    "epochs": 8,
+    "patience": 2,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "weight_decay": 0.00001,
+    "task_weights": {"is_click": 1.0, "long_view": 1.0, "is_like": 0.2, "is_hate": 0.05}
+  }
+}
