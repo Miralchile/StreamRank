@@ -1,0 +1,19 @@
+{
+  "component": "feature_schema",
+  "version": "pit-kuairand-pure-v1",
+  "compatibility_key": "kuairand-pure-sample-schema-v1",
+  "config": {
+    "required_candidate_features": [
+      "category",
+      "author_id",
+      "upload_time_ms"
+    ],
+    "probability_outputs": [
+      "is_click",
+      "long_view",
+      "is_like",
+      "is_hate"
+    ],
+    "source": "KuaiRand-Pure video_features_basic_pure.csv"
+  }
+}

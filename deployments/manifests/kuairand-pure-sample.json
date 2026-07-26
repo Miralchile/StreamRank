@@ -1,0 +1,39 @@
+{
+  "deployment_id": "kuairand-pure-sample-v1",
+  "model_version": "focused-deepfm-kuairand-pure-v1",
+  "calibrator_version": "identity-kuairand-pure-v1",
+  "feature_schema_version": "pit-kuairand-pure-v1",
+  "item_index_version": "itemcf-popularity-kuairand-pure-v1",
+  "rerank_policy_version": "policy-kuairand-pure-v1",
+  "created_at": "2026-07-26T07:51:55.480044+00:00",
+  "compatibility_key": "kuairand-pure-sample-schema-v1",
+  "component_compatibility": {
+    "model": "kuairand-pure-sample-schema-v1",
+    "calibrator": "kuairand-pure-sample-schema-v1",
+    "feature_schema": "kuairand-pure-sample-schema-v1",
+    "item_index": "kuairand-pure-sample-schema-v1",
+    "rerank_policy": "kuairand-pure-sample-schema-v1"
+  },
+  "artifacts": {
+    "model": {
+      "path": "../components/model-focused-deepfm-kuairand-pure-v1.json",
+      "sha256": "4dc9c593eb6e9a6492261db24fa3923298005c9edb02b7ca7ca8a01f611ceaba"
+    },
+    "calibrator": {
+      "path": "../components/calibrator-identity-kuairand-pure-v1.json",
+      "sha256": "3e2467945198b4af8dc476aedc0d9edf522386102ab51e4cf8321976504555ef"
+    },
+    "feature_schema": {
+      "path": "../components/feature-schema-pit-kuairand-pure-v1.json",
+      "sha256": "836bb5b36a8e709faa24a2befc022566d776805a7cde608880d9d5fb632f627e"
+    },
+    "item_index": {
+      "path": "../components/item-index-itemcf-popularity-kuairand-pure-v1.json",
+      "sha256": "9c284294bb4e645de18f9fb378816dc40c6844ab9e0e52c7bc2097325b0451a9"
+    },
+    "rerank_policy": {
+      "path": "../components/rerank-policy-policy-kuairand-pure-v1.json",
+      "sha256": "ad081725582e5e46c019aaac436994ac75db82cca284f97d9837e6f602ee0a3a"
+    }
+  }
+}

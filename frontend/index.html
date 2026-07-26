@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10211c" />
+    <title>StreamRank · 推荐算法验证实验室</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script defer src="/assets/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <aside class="sidebar" aria-label="实验导航">
+      <a class="brand" href="#overview" aria-label="StreamRank 首页">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>StreamRank</strong><small>ALGORITHM LAB</small></span>
+      </a>
+      <p class="side-intro">真实数据训练、离线评测与在线推荐演示。</p>
+      <nav>
+        <a class="nav-link active" href="#data"><span>01</span><b>真实训练数据</b><small>数据规模与时间划分</small></a>
+        <a class="nav-link" href="#training"><span>02</span><b>推荐模型训练</b><small>学习过程与版本选择</small></a>
+        <a class="nav-link" href="#evidence"><span>03</span><b>推荐效果验证</b><small>测试结果与在线演示</small></a>
+      </nav>
+      <div class="side-status">
+        <span class="pulse" id="sidePulse"></span>
+        <div><strong id="sideStatus">正在连接</strong><small id="sideBackend">读取实验产物</small></div>
+      </div>
+    </aside>
+
+    <main id="main">
+      <header class="topbar">
+        <button class="menu-button" id="menuButton" type="button" aria-label="打开导航" aria-expanded="false">菜单</button>
+        <p><span>STREAMRANK</span> / REAL DATA → TRAINING → EVIDENCE</p>
+        <div><span class="live-dot"></span><b id="topStatus">实验产物加载中</b><button id="refreshAll" class="refresh" type="button" aria-label="刷新数据">↻</button></div>
+      </header>
+
+      <section class="hero" id="overview">
+        <div class="hero-copy">
+          <p class="eyebrow">RECOMMENDATION ALGORITHM LAB</p>
+          <h1>短视频推荐<br /><em>从训练到验证。</em></h1>
+          <p class="hero-lead">用真实行为日志训练排序模型，并通过独立测试和在线接口验证效果。</p>
+          <a class="button primary" href="#data">开始查看实验 <span>↓</span></a>
+        </div>
+        <div class="hero-proof" aria-label="算法验证三个阶段">
+          <article><small>01 / 真实数据</small><strong id="heroRows">—</strong><span>用户与视频交互记录</span></article>
+          <article><small>02 / 最佳模型</small><strong id="heroWinner">—</strong><span>由验证数据自动选择</span></article>
+          <article><small>03 / 离线效果</small><strong id="heroAuc">—</strong><span>长播内容排序能力</span></article>
+        </div>
+      </section>
+
+      <section class="section" id="data">
+        <div class="section-heading">
+          <div><p class="eyebrow">01 · 真实训练数据</p><h2>真实数据</h2></div>
+          <p>48万条用户—视频行为，按时间先后训练与测试。</p>
+        </div>
+
+        <div class="provenance" id="datasetProvenance">正在核验真实数据来源…</div>
+        <div class="data-layout">
+          <form class="panel controls" id="datasetControls">
+            <div class="panel-head"><div><small>数据预览</small><h3>查看数据配置</h3></div><span>不触发重训</span></div>
+            <label>用户队列规模
+              <input name="cohort_size" type="number" min="500" max="5000" step="500" value="5000" inputmode="numeric" />
+              <small>按比例预览数据规模，不会重新训练或改写正式结果。</small>
+            </label>
+            <label>日志来源
+              <select name="logging_policy">
+                <option value="standard">标准推荐日志</option>
+                <option value="random">随机曝光日志</option>
+                <option value="all">全部日志</option>
+              </select>
+            </label>
+            <label>观察目标
+              <select name="target">
+                <option value="is_click">有效播放 / 点击</option>
+                <option value="long_view" selected>长播</option>
+                <option value="is_like">点赞</option>
+                <option value="is_hate">负反馈</option>
+              </select>
+            </label>
+            <label>最多保留近期行为条数
+              <input name="history_length" type="number" min="1" max="100" step="1" value="50" inputmode="numeric" />
+            </label>
+            <button class="button primary full" type="submit">更新数据预览 <span>→</span></button>
+          </form>
+
+          <div class="data-story">
+            <div class="metric-grid">
+              <article><span>当前预览交互</span><strong id="viewRows">—</strong><small id="viewPolicy">—</small></article>
+              <article><span>观察目标正例率</span><strong id="viewPositiveRate">—</strong><small id="viewTarget">—</small></article>
+              <article><span>候选视频</span><strong id="viewItems">—</strong><small>真实短视频目录</small></article>
+              <article><span>历史输入</span><strong id="viewHistory">—</strong><small>只使用曝光前行为</small></article>
+            </div>
+            <div class="panel timeline-panel">
+              <div class="panel-head"><div><small>时间切分</small><h3>训练与测试分离</h3></div><span>避免未来信息泄漏</span></div>
+              <div class="time-flow">
+                <article><i></i><small>TRAIN</small><strong>训练</strong><span id="trainRows">—</span><time>截至 2022-04-21</time></article>
+                <article><i></i><small>VALIDATE</small><strong>选择版本</strong><span id="validationRows">—</span><time>2022-04-22 至 04-30</time></article>
+                <article><i></i><small>TEST</small><strong>最终验证</strong><span id="testRows">—</span><time>2022-05-01 至 05-08</time></article>
+              </div>
+              <p class="plain-note"><b>实际作用：</b>模型只能使用推荐发生前的信息，避免离线结果因为偷看未来数据而虚高。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section dark-section" id="training">
+        <div class="section-heading light">
+          <div><p class="eyebrow">02 · 推荐模型训练</p><h2>训练与选型</h2></div>
+          <p>学习用户偏好，由独立验证数据选择最佳版本。</p>
+        </div>
+
+        <div class="model-tabs" id="modelTabs" role="tablist" aria-label="模型版本"></div>
+        <div class="model-layout">
+          <div class="panel algorithm-panel">
+            <div class="panel-head"><div><small>模型流程</small><h3 id="selectedModelName">—</h3></div><span id="selectedModelParams">—</span></div>
+            <div class="algorithm-flow" id="algorithmFlow"></div>
+            <p class="model-explanation" id="modelExplanation">—</p>
+          </div>
+          <div class="panel training-panel">
+            <div class="panel-head"><div><small>训练过程</small><h3>最佳训练轮次</h3></div><span id="bestEpoch">—</span></div>
+            <div class="epoch-chart" id="epochChart"></div>
+            <div class="selection-score"><span>点击与长播验证 GAUC 均值</span><strong id="selectionScore">—</strong></div>
+          </div>
+        </div>
+
+        <div class="winner-band">
+          <div><small>验证数据选出的最佳模型</small><strong id="winnerName">—</strong></div>
+          <p id="winnerReason">—</p>
+          <span id="servingAlignment" class="status-badge">检查部署状态</span>
+        </div>
+      </section>
+
+      <section class="section" id="evidence">
+        <div class="section-heading">
+          <div><p class="eyebrow">03 · 推荐效果验证</p><h2>效果验证</h2></div>
+          <p>在未参与训练的真实日志上检验排序能力。</p>
+        </div>
+
+        <div class="proof-summary">
+          <article class="proof-card primary-proof"><small>有效播放 AUC</small><strong id="clickAuc">—</strong><span id="clickMeaning">—</span></article>
+          <article class="proof-card"><small>长播 AUC</small><strong id="longAuc">—</strong><span id="longMeaning">—</span></article>
+          <article class="proof-card"><small>测试正样本</small><strong id="positiveRows">—</strong><span>长播事件，来自最终时间段</span></article>
+        </div>
+
+        <div class="evidence-layout">
+          <div class="panel comparison-panel">
+            <div class="panel-head"><div><small>泛化能力</small><h3>分布变化测试</h3></div><span>标准日志 vs 随机曝光</span></div>
+            <div class="policy-compare" id="policyCompare"></div>
+            <p class="plain-note">随机曝光改变了视频分布。指标下降说明模型跨分布泛化变弱，但不能仅凭这一差距断言唯一原因就是旧推荐策略。</p>
+          </div>
+          <div class="panel verdict-panel">
+            <div class="panel-head"><div><small>结果结论</small><h3>结论与边界</h3></div><span>离线证据</span></div>
+            <div class="verdict yes"><b>已经证明</b><p>模型在独立真实日志上具备有效播放与长播的离线区分能力。</p></div>
+            <div class="verdict pending"><b>尚未证明</b><p>当前没有真实线上A/B实验，不能声称新模型提升了线上CTR或长期收益。</p></div>
+          </div>
+        </div>
+
+        <div class="loop-lab">
+          <div class="loop-heading">
+            <div><p class="eyebrow">在线推荐演示</p><h3>在线推荐</h3></div>
+            <p>选择真实用户，调用在线服务，观察排序与反馈更新。</p>
+          </div>
+          <div class="loop-status" id="loopStatus"></div>
+          <div class="loop-grid">
+            <form class="panel compact-form" id="recommendForm">
+              <div class="panel-head"><div><small>推荐请求</small><h3>选择用户</h3></div><span id="deploymentId">—</span></div>
+              <label>真实演示用户<select name="user_id" id="servingUserSelect" required><option value="">正在读取用户画像…</option></select></label>
+              <p class="profile-summary" id="selectedProfileSummary">正在读取用户历史…</p>
+              <p class="input-help">仅展示有历史行为的用户；无历史用户将回退到热门推荐。</p>
+              <label>推荐场景
+                <select name="tab">
+                  <option value="0">场景 0</option>
+                  <option value="1">场景 1</option>
+                  <option value="2">场景 2</option>
+                  <option value="3">场景 3</option>
+                </select>
+              </label>
+              <label>返回数量<input name="top_k" type="number" min="1" max="20" step="1" value="5" required /></label>
+              <input name="query_time_ms" type="hidden" />
+              <button class="button primary full" type="submit" disabled>生成个性化推荐 <span>→</span></button>
+              <p class="form-status" id="recommendState">等待服务就绪</p>
+            </form>
+            <div class="panel live-results">
+              <div class="panel-head"><div><small>接口返回</small><h3>推荐结果</h3></div><span>分数从高到低</span></div>
+              <div class="pipeline-funnel" id="pipelineFunnel" hidden aria-label="多阶段推荐漏斗">
+                <div class="funnel-meta" id="funnelMeta"></div>
+                <div class="funnel-stages" id="funnelStages"></div>
+              </div>
+              <div id="recommendResults" class="result-list"><p class="empty">发起请求后显示真实接口返回结果。</p></div>
+              <div class="feedback-action">
+                <button class="button secondary full" id="feedbackButton" type="button" disabled>模拟长播反馈并刷新 <span>↻</span></button>
+                <p id="feedbackState">反馈后会写入在线用户状态，再重新排序。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer><strong>StreamRank Algorithm Lab</strong><span>真实数据 · 可复现实验 · 诚实证据边界</span><a href="/docs">API 文档 ↗</a></footer>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "requests": 1000,
+  "concurrency": 8,
+  "errors": 0,
+  "duration_seconds": 4.619767875410616,
+  "qps": 216.46109219526912,
+  "p50_ms": 24.722875095903873,
+  "p95_ms": 105.37683311849833,
+  "p99_ms": 173.24283299967647,
+  "scope": "single-process local demo; not a production capacity claim",
+  "catalog": "data/processed/kuairand-pure-5k/interactions.csv",
+  "deployment_id": "kuairand-pure-sample-v1"
+}

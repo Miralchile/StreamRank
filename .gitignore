@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+dist/
+build/
+*.egg-info/
+.env
+.DS_Store
+nohup.out
+
+# Raw KuaiRand archives stay out of the repo (200MB+, download via `make rank-download`)
+data/raw/
+
+# Regenerable smoke-run outputs
+artifacts/sequence-ranking-smoke/
+
+# Retired legacy line kept locally for reference only
+_to_delete/

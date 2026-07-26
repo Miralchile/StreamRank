@@ -1,0 +1,12 @@
+{
+  "deployment_id": "demo-v1",
+  "requests": 100,
+  "concurrency": 4,
+  "errors": 0,
+  "qps": 0.0,
+  "p50_ms": 0.0,
+  "p95_ms": 0.0,
+  "p99_ms": 0.0,
+  "measurement_scope": "placeholder only; run make benchmark for local timing",
+  "production_capacity_claim": false
+}

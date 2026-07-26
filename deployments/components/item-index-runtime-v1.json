@@ -1,0 +1,11 @@
+{
+  "component": "item_index",
+  "version": "runtime-index-v1",
+  "compatibility_key": "demo-schema-v1",
+  "config": {
+    "kind": "itemcf_popularity",
+    "catalog_path": "../../data/demo/interactions.csv",
+    "catalog_sha256": "50206ab8e2fc0903f854417f3a13c752501f79ceec76f8fb834f4d75d9c9485d",
+    "retrievers": ["itemcf", "popularity"]
+  }
+}

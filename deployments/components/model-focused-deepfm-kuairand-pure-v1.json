@@ -1,0 +1,15 @@
+{
+  "component": "model",
+  "version": "focused-deepfm-kuairand-pure-v1",
+  "compatibility_key": "kuairand-pure-sample-schema-v1",
+  "config": {
+    "kind": "focused_ranker",
+    "architecture": "deepfm",
+    "task_layer": "shared_bottom",
+    "artifact_path": "../../artifacts/sequence-ranking-real/artifact.json",
+    "artifact_sha256": "a4ed213ae28510fcff4f52e0387f13c04f0c51233cb7f14ab2ff3eefe267dc09",
+    "checkpoint_path": "../../artifacts/sequence-ranking-real/deepfm.pt",
+    "checkpoint_sha256": "bd13b98b6a2d73a2c777dfd449fbebd0325e873e12dbe511b8ce624bc1cf6c97",
+    "training_note": "offline-selected focused ranker bound to online serving rerank stage"
+  }
+}

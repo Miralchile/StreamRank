@@ -1,0 +1,17 @@
+{
+  "component": "model",
+  "version": "heuristic-kuairand-pure-v1",
+  "compatibility_key": "kuairand-pure-sample-schema-v1",
+  "config": {
+    "kind": "heuristic",
+    "base_bias": -2.2,
+    "popularity_weight": 0.35,
+    "source_count_weight": 0.25,
+    "affinity_weight": 0.15,
+    "long_view_offset": -0.45,
+    "like_offset": -1.8,
+    "hate_bias": -4.0,
+    "hate_affinity_weight": -0.1,
+    "training_note": "serving heuristic fitted on real catalog; offline report uses multitask logistic regression"
+  }
+}

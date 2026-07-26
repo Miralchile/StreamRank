@@ -1,0 +1,15 @@
+{
+  "component": "calibrator",
+  "version": "identity-kuairand-pure-v1",
+  "compatibility_key": "kuairand-pure-sample-schema-v1",
+  "config": {
+    "kind": "identity",
+    "tasks": [
+      "is_click",
+      "long_view",
+      "is_like",
+      "is_hate"
+    ],
+    "serving_note": "offline Platt calibrators are not claimed as bound serving artifacts"
+  }
+}

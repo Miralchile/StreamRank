@@ -1,0 +1,32 @@
+{
+  "seed": 2026,
+  "input_csv": "data/processed/kuairand-pure-sample/interactions.csv",
+  "output_dir": "artifacts/sequence-ranking-smoke",
+  "max_history": 20,
+  "request_group_window_ms": 1000,
+  "max_rows_per_split": {
+    "train": 8000,
+    "validation": 3000,
+    "test": 3000,
+    "random_diagnostic": 3000
+  },
+  "splits": {
+    "train_end": "2022-04-22T00:00:00+08:00",
+    "validation_end": "2022-05-01T00:00:00+08:00",
+    "test_end": "2022-05-09T00:00:00+08:00"
+  },
+  "models": {
+    "deepfm": {"architecture": "deepfm", "task_layer": "shared_bottom", "embedding_dim": 16, "hidden_dim": 32},
+    "din": {"architecture": "din", "task_layer": "shared_bottom", "embedding_dim": 16, "hidden_dim": 32},
+    "din_mmoe": {"architecture": "din", "task_layer": "mmoe", "embedding_dim": 16, "hidden_dim": 32, "num_experts": 4}
+  },
+  "training": {
+    "device": "cpu",
+    "epochs": 2,
+    "patience": 2,
+    "batch_size": 512,
+    "learning_rate": 0.001,
+    "weight_decay": 0.00001,
+    "task_weights": {"is_click": 1.0, "long_view": 1.0, "is_like": 0.2, "is_hate": 0.05}
+  }
+}

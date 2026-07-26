@@ -1,0 +1,17 @@
+{
+  "component": "rerank_policy",
+  "version": "diversity-v1",
+  "compatibility_key": "demo-schema-v1",
+  "config": {
+    "score_weights": {
+      "is_click": 0.4,
+      "long_view": 0.3,
+      "is_like": 0.2,
+      "freshness": 0.1,
+      "is_hate": -0.8
+    },
+    "max_per_category": 5,
+    "max_per_author": 3,
+    "concentration_penalty": 0.05
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "deployment_id": "demo-2026-07-17",
+  "model_version": "heuristic-v1",
+  "calibrator_version": "identity-v1",
+  "feature_schema_version": "pit-v1",
+  "item_index_version": "runtime-index-v1",
+  "rerank_policy_version": "diversity-v1",
+  "created_at": "2026-07-17T00:00:00Z",
+  "compatibility_key": "demo-schema-v1",
+  "component_compatibility": {
+    "model": "demo-schema-v1",
+    "calibrator": "demo-schema-v1",
+    "feature_schema": "demo-schema-v1",
+    "item_index": "demo-schema-v1",
+    "rerank_policy": "demo-schema-v1"
+  },
+  "artifacts": {
+    "model": {
+      "path": "../components/model-heuristic-v1.json",
+      "sha256": "9a91f665ed7be45a9c55d8fa9811798782ac0196a13784dc57e6927eb5cf5122"
+    },
+    "calibrator": {
+      "path": "../components/calibrator-identity-v1.json",
+      "sha256": "457755357be7e1c3af4087c09d59e4fe1d82ad4686fae5ed5d011ea1bceb07f8"
+    },
+    "feature_schema": {
+      "path": "../components/feature-schema-pit-v1.json",
+      "sha256": "fd5078cc9b2bf3628d8052bd75583b909d422348844a189daa1ded654ad58b85"
+    },
+    "item_index": {
+      "path": "../components/item-index-runtime-v1.json",
+      "sha256": "efe6c633f431f8c32c66f1769cc729177fc0d9c36d5c2b0b28b9615a78fe08a1"
+    },
+    "rerank_policy": {
+      "path": "../components/rerank-policy-diversity-v1.json",
+      "sha256": "f9a942be1dd33a3ab48aa1ea53aa36dd9bab5dfd24d99ba9eb6a4cdad2ae2531"
+    }
+  }
+}

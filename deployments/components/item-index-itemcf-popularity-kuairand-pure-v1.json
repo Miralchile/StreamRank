@@ -1,0 +1,17 @@
+{
+  "component": "item_index",
+  "version": "itemcf-popularity-kuairand-pure-v1",
+  "compatibility_key": "kuairand-pure-sample-schema-v1",
+  "config": {
+    "kind": "itemcf_popularity",
+    "catalog_path": "../../data/processed/kuairand-pure-5k/interactions.csv",
+    "catalog_sha256": "b79a51e46483383aafe781f1966b2a0267dffe4ce5f8e989f5068611cb95fbf8",
+    "retrievers": [
+      "itemcf",
+      "popularity"
+    ],
+    "dataset": "KuaiRand-Pure deterministic-user-sample; 5000 users",
+    "dataset_manifest": "data/processed/kuairand-pure-5k/dataset_manifest.json",
+    "fit_scope": "full prepared catalog log for interactive serving; separate from offline temporal evaluation"
+  }
+}

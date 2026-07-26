@@ -1,0 +1,9 @@
+{
+  "component": "calibrator",
+  "version": "identity-v1",
+  "compatibility_key": "demo-schema-v1",
+  "config": {
+    "kind": "identity",
+    "tasks": ["is_click", "long_view", "is_like", "is_hate"]
+  }
+}

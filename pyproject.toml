@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "streamrank"
+version = "0.1.0"
+description = "Multi-objective sequential ranking on KuaiRand with a manifest-bound online serving demo"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+serving = ["fastapi>=0.110", "uvicorn>=0.27", "redis>=5.0"]
+streaming = ["kafka-python>=2.0"]
+ml = ["torch>=2.1"]
+dev = ["pytest>=8.0", "httpx>=0.27", "ruff>=0.6"]
+
+[project.scripts]
+streamrank = "streamrank.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]

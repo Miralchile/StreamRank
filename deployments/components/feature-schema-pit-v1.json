@@ -1,0 +1,9 @@
+{
+  "component": "feature_schema",
+  "version": "pit-v1",
+  "compatibility_key": "demo-schema-v1",
+  "config": {
+    "required_candidate_features": ["category", "author_id", "upload_time_ms"],
+    "probability_outputs": ["is_click", "long_view", "is_like", "is_hate"]
+  }
+}

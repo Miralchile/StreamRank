@@ -1,0 +1,15 @@
+{
+  "dataset": "Bundled synthetic demo",
+  "mode": "synthetic_fixture",
+  "interaction_rows": 35,
+  "selected_users": 5,
+  "source_users": 5,
+  "catalog_items": 12,
+  "item_metadata_coverage": 1.0,
+  "license": "Project-owned test fixture",
+  "archive_md5": null,
+  "limitations": [
+    "Synthetic records validate the engineering path only.",
+    "They must not be presented as evidence of recommendation quality."
+  ]
+}

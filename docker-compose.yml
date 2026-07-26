@@ -1,0 +1,64 @@
+services:
+  api:
+    build: .
+    environment:
+      STREAMRANK_MANIFEST: deployments/manifests/kuairand-pure-sample.json
+      STREAMRANK_FALLBACK_MANIFEST: deployments/manifests/fallback.json
+      STREAMRANK_DATASET_MANIFEST: data/processed/kuairand-pure-5k/dataset_manifest.json
+      STREAMRANK_BENCHMARK_REPORT: artifacts/benchmarks/kuairand-pure-sample.json
+      STREAMRANK_FOCUSED_REPORT: artifacts/sequence-ranking-real/report.json
+      STREAMRANK_FOCUSED_DATASET_MANIFEST: data/processed/kuairand-pure-5k/dataset_manifest.json
+      STREAMRANK_ROOT: /app
+      STREAMRANK_REDIS_URL: redis://redis:6379/0
+      STREAMRANK_STATE_BACKEND: redis
+      STREAMRANK_KAFKA_BOOTSTRAP: redpanda:9092
+      STREAMRANK_EVENT_TOPIC: streamrank.events
+      STREAMRANK_EVENT_MODE: kafka
+    ports:
+      - "${STREAMRANK_API_PORT:-18000}:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_started
+
+  feature-consumer:
+    build: .
+    command: ["python", "-m", "streamrank.streaming.worker"]
+    environment:
+      STREAMRANK_REDIS_URL: redis://redis:6379/0
+      STREAMRANK_KAFKA_BOOTSTRAP: redpanda:9092
+      STREAMRANK_EVENT_TOPIC: streamrank.events
+      STREAMRANK_CONSUMER_GROUP: streamrank-features
+    depends_on:
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_started
+
+  redis:
+    image: redis:7.2-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redpanda:
+    image: redpandadata/redpanda:v24.1.2
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=512M
+      - --reserve-memory=0M
+      - --node-id=0
+      - --check=false
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092,OUTSIDE://localhost:19092
+    ports:
+      - "19092:19092"
