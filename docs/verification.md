@@ -1,33 +1,40 @@
 # 验证记录
 
-## 2026-07-26 单主线收敛后验证
+## 2026-07-26(第二轮)完善验证
 
-本次重构删除旧五阶段控制面实验线(移入 `_to_delete/`),收敛为
-"序列精排 → manifest绑定serving → 前端漏斗" 单主线,并做了如下验证
-(云端环境无 torch/fastapi,相关测试按既有 skip 守卫跳过):
+- **全部 33 项测试首次在完整依赖环境实际执行并通过**(本机 docker 镜像,
+  含 torch 与 fastapi;此前 API 与 torch 用例仅有 skip 守卫)。过程中修复了
+  两个真实问题:starlette 新版 TestClient 缺依赖时抛 RuntimeError 而测试守卫
+  只捕获 ImportError;dev extra 的 httpx 已被 starlette 的 httpx2 要求取代。
+- **GitHub Actions CI 上线并通过**:CPU torch + lint + 33 项测试 + 真实日志
+  冒烟实验 + compileall,首轮 2m08s 全绿(run 30196709351)。
+- **模型对照补统计支撑**(`scripts/compare_models.py`,B=2000 用户级配对
+  bootstrap):验证集 DeepFM−DIN+MMoE 差距 +0.0073,95% CI [+0.0015, +0.0135];
+  DeepFM−DIN +0.0053,CI [−0.0010, +0.0115] 跨零;最终测试集三组两两差距 CI
+  全部跨零。独立种子重训:2026 胜者 DeepFM(0.6395),2027 胜者 DIN(0.6340),
+  2028 胜者 DIN(0.6397),排名翻转直接观测到;均值 0.6355/0.6360/0.6328,
+  σ≈0.003–0.004。原计划 4 个额外种子,因 docker VM 中序列模型训练较原生慢约
+  7 倍,在 2027/2028 完成后截断(2029/2030 未跑);3 个独立种子已足以支撑
+  "统计不可分、胜出随种子翻转"的结论,README 已按此改写。
+- **召回/重排量化评测**(`make recall-eval`,3,845 用户):ItemCF
+  Recall@100=0.158 / HitRate@200=0.548 / 覆盖 81.4%;类目热门 0.076/0.335/71.1%;
+  朴素 RRF 融合 0.139/0.524/81.5%,在所有 K 低于单路 ItemCF(弱源稀释,
+  如实报告)。重排(200 用户,Top-20):类目数 7.1→17.8,最大类目占比
+  54%→9.2%,保留 87.3% 分数、与纯分数序重合 44%。
 
-- `ruff check` 与 `ruff format --check`:通过;
-- `python -m compileall src scripts tests`:通过;
-- 无 torch/fastapi 依赖的单元测试(engine trace、serving build、manifest、
-  scoring、metrics、audit、prepare、download、streaming):通过;
-- `streamrank build-deployment`:用 `configs/serving_policy.json` 重建全部
-  descriptor 与 manifest,`DeploymentBundle.load` 校验通过(含 5k catalog、
-  artifact.json、deepfm.pt 的 SHA-256);
-- 既有回归基准 `artifacts/benchmarks/kuairand-pure-sample.json` 的
-  deployment_id 与重建后 manifest 一致。
+## 2026-07-26(第一轮)单主线收敛验证
 
-**待本机复验**(需要完整 ml/serving 依赖):
+- ruff check / format、compileall 通过;无 torch/fastapi 依赖的 22 项测试通过;
+- `streamrank build-deployment` 用显式 policy 配置重建全部 descriptor 与
+  manifest,`DeploymentBundle.load` 校验通过(5k catalog、artifact、checkpoint
+  的 SHA-256);
+- 本机 `docker compose up -d --build` 四服务重建,`/health`、`/ready`、
+  `/recommend`(含 pipeline 字段、DeepFM 绑定)线上验证通过,前端漏斗渲染无
+  JS 报错。
 
-```bash
-pip install -e '.[ml,serving,streaming,dev]'
-make verify          # lint + 全部测试(含API与torch用例) + rank-smoke
-docker compose up -d --build   # 四服务集成与前端漏斗人工检查
-```
+## 2026-07-17 Docker 集成验收(历史记录)
 
-## 2026-07-17 Docker 集成验收(历史记录,早于单主线收敛)
-
-`docker compose up -d --build` 后四服务(api/redis/redpanda/feature-consumer)
-持续运行,已验证:健康与就绪探针、带召回源的推荐返回、manifest descriptor
+四服务持续运行;健康/就绪探针、带召回源的推荐返回、manifest descriptor
 SHA-256 校验、`API → Redpanda → consumer → Redis Lua` 端到端幂等、毒消息进入
-DLQ、`/metrics` 延迟与lag指标。当时 serving 绑定 demo 目录;该结论证明工程链路
-可运行,不代表真实数据模型效果,也不代表线上 uplift。
+DLQ、`/metrics` 指标均验证。当时 serving 绑定 demo 目录;结论证明工程链路可
+运行,不代表真实数据模型效果,也不代表线上 uplift。

@@ -59,3 +59,9 @@ serve-real:
 
 docker:
 	docker compose up --build
+
+compare-models:
+	PYTHONPATH=src python scripts/compare_models.py --seed-reports 'artifacts/sequence-ranking-seeds/*/report.json'
+
+recall-eval:
+	PYTHONPATH=src python scripts/evaluate_recall.py

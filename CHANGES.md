@@ -52,3 +52,20 @@
 - 目录尚无 git:建议 `git init` 后首次提交,当前 `.gitignore` 会排除大数据与 artifacts;
 - 本机执行 `make verify` 与 `docker compose up -d --build` 做最终集成复验;
 - 确认无误后删除 `_to_delete/`。
+
+# 2026-07-26 完善轮:测试闭环、CI、统计支撑、召回评测
+
+按"完整实验+部署"标准补齐四项:
+
+1. **测试闭环**:33/33 首次在完整依赖环境执行并通过;修复 API 测试守卫
+   (RuntimeError)与 httpx→httpx2 依赖迁移。
+2. **CI**:`.github/workflows/ci.yml` 跑 lint + 全部测试 + rank-smoke +
+   compileall(CPU torch),README 加徽章。
+3. **统计支撑**:`scripts/compare_models.py` 输出选型 GAUC 差距的用户级配对
+   bootstrap 置信区间与多 seed 重跑汇总。结果实质改写了项目结论:测试集两两
+   差距的 CI 全部跨零,且 3 个独立种子的胜者翻转(DeepFM 1 次、DIN 2 次),
+   README 由"DeepFM 胜出"改为"三模型统计不可分、单次胜出由种子决定,部署
+   沿用预注册协议在 seed=2026 选出的 checkpoint"。
+4. **召回/重排评测**:`evaluation/recall.py` + `make recall-eval`,时间正确的
+   next-positive 协议;量化三路召回与融合的 Recall@K/HitRate/覆盖率、重排的
+   多样性-分数权衡;如实报告"朴素 RRF 低于单路 ItemCF"的负结果。

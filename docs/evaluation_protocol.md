@@ -39,6 +39,22 @@ GAUC = Σ valid_user impressions(user) × AUC(user) / Σ valid_user impressions(
 仅保留同时有正负样本的用户。稀有标签在部分切片上没有双类样本时,指标显式置为 null,
 不允许 NaN 混入报告。
 
+## 统计支撑
+
+模型对照差距用两种互补方式量化(`scripts/compare_models.py`):用户级配对
+bootstrap(重采样评测用户,B=2000,报告选型GAUC差距的95%百分位区间与
+P(Δ≤0)),量化单次训练下评测队列的抽样不确定性;多seed重跑汇总
+(`--seed/--output-dir` 重训全部模型)量化重训练方差与排名稳定性。二者都不度量
+线上收益。
+
+## 召回评测
+
+召回阶段单独评测(`evaluation/recall.py`):检索器只用截止时间前的日志拟合;
+每个用户的查询状态是其截止前轨迹,目标是评测窗口内首次长播且从未交互过的物品;
+候选宇宙限定为截止前观测到的目录,排除已看物品,与serving引擎一致。报告
+Recall@K、HitRate@K与目录覆盖率,按召回源与RRF融合分别汇总。该协议度量的是
+日志候选池内的next-positive检索质量,未做曝光去偏。
+
 ## 随机日志
 
 随机曝光切片只用于与标准日志对比预测与校准质量,是 logging-policy 偏差的诊断证据。

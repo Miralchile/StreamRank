@@ -1,0 +1,166 @@
+{
+  "method": {
+    "bootstrap": "paired user-clustered bootstrap over evaluation users",
+    "selection_metric": "mean impression-weighted user GAUC of is_click and long_view",
+    "caveat": "bootstrap quantifies evaluation-cohort sampling uncertainty for one training run; seed aggregation quantifies retraining variance"
+  },
+  "bootstrap": {
+    "replicates": 2000,
+    "splits": {
+      "validation": {
+        "models": {
+          "deepfm": {
+            "is_click_gauc": 0.6389356347787996,
+            "long_view_gauc": 0.6400633507497773,
+            "selection_gauc": 0.6394994927642884
+          },
+          "din": {
+            "is_click_gauc": 0.6337931408812111,
+            "long_view_gauc": 0.6345737622639989,
+            "selection_gauc": 0.634183451572605
+          },
+          "din_mmoe": {
+            "is_click_gauc": 0.6315824651556455,
+            "long_view_gauc": 0.6327451048384309,
+            "selection_gauc": 0.6321637849970383
+          }
+        },
+        "pairs": {
+          "deepfm_minus_din": {
+            "observed_delta": 0.005316041191683385,
+            "ci95": [
+              -0.0010184886551284106,
+              0.011470301220316951
+            ],
+            "p_delta_le_0": 0.0425
+          },
+          "deepfm_minus_din_mmoe": {
+            "observed_delta": 0.007335707767250121,
+            "ci95": [
+              0.0014855664954551984,
+              0.01354474422271741
+            ],
+            "p_delta_le_0": 0.0085
+          },
+          "din_minus_din_mmoe": {
+            "observed_delta": 0.0020196665755667365,
+            "ci95": [
+              -0.003872302549759471,
+              0.007822644980183495
+            ],
+            "p_delta_le_0": 0.238
+          }
+        }
+      },
+      "test": {
+        "models": {
+          "deepfm": {
+            "is_click_gauc": 0.6170993063818249,
+            "long_view_gauc": 0.624105639625043,
+            "selection_gauc": 0.6206024730034339
+          },
+          "din": {
+            "is_click_gauc": 0.6101626677201041,
+            "long_view_gauc": 0.6196965388923248,
+            "selection_gauc": 0.6149296033062144
+          },
+          "din_mmoe": {
+            "is_click_gauc": 0.6129275052973117,
+            "long_view_gauc": 0.6177916753240834,
+            "selection_gauc": 0.6153595903106975
+          }
+        },
+        "pairs": {
+          "deepfm_minus_din": {
+            "observed_delta": 0.005672869697219474,
+            "ci95": [
+              -0.00114970835425455,
+              0.012190387378750656
+            ],
+            "p_delta_le_0": 0.0525
+          },
+          "deepfm_minus_din_mmoe": {
+            "observed_delta": 0.005242882692736317,
+            "ci95": [
+              -0.0020353843904135967,
+              0.012357941763423481
+            ],
+            "p_delta_le_0": 0.0725
+          },
+          "din_minus_din_mmoe": {
+            "observed_delta": -0.00042998700448315663,
+            "ci95": [
+              -0.007453911018607487,
+              0.006265825768268639
+            ],
+            "p_delta_le_0": 0.535
+          }
+        }
+      }
+    }
+  },
+  "seeds": {
+    "runs": [
+      {
+        "report": "artifacts/sequence-ranking-seeds/seed-2026/report.json",
+        "winner": "deepfm",
+        "validation_selection_gauc": {
+          "deepfm": 0.639499492764289,
+          "din": 0.6341834515726038,
+          "din_mmoe": 0.6321637849970378
+        }
+      },
+      {
+        "report": "artifacts/sequence-ranking-seeds/seed-2027/report.json",
+        "winner": "din",
+        "validation_selection_gauc": {
+          "deepfm": 0.6321718850389906,
+          "din": 0.634012286647919,
+          "din_mmoe": 0.6324344090764521
+        }
+      },
+      {
+        "report": "artifacts/sequence-ranking-seeds/seed-2028/report.json",
+        "winner": "din",
+        "validation_selection_gauc": {
+          "deepfm": 0.6347026184902398,
+          "din": 0.63971503005983,
+          "din_mmoe": 0.6338397312093371
+        }
+      }
+    ],
+    "summary": {
+      "deepfm": {
+        "mean": 0.6354579987645065,
+        "std": 0.0037217480117582575,
+        "values": [
+          0.639499492764289,
+          0.6321718850389906,
+          0.6347026184902398
+        ]
+      },
+      "din": {
+        "mean": 0.6359702560934509,
+        "std": 0.0032441984221550624,
+        "values": [
+          0.6341834515726038,
+          0.634012286647919,
+          0.63971503005983
+        ]
+      },
+      "din_mmoe": {
+        "mean": 0.6328126417609424,
+        "std": 0.0008997187890349963,
+        "values": [
+          0.6321637849970378,
+          0.6324344090764521,
+          0.6338397312093371
+        ]
+      }
+    },
+    "winner_counts": {
+      "deepfm": 1,
+      "din": 2
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "protocol": {
+    "fit_end_ms": 1651334400000,
+    "eval_end_ms": 1652025600000,
+    "target_label": "long_view",
+    "history_labels": [
+      "is_click",
+      "long_view",
+      "is_like"
+    ],
+    "candidate_universe": "items observed before fit_end_ms; previously seen items excluded",
+    "caveat": "next-positive retrieval inside the logged candidate pool; not exposure-debiased"
+  },
+  "fit_events": 312571,
+  "catalog_items": 7581,
+  "evaluated_users": 3845,
+  "ks": [
+    50,
+    100,
+    200,
+    500
+  ],
+  "sources": {
+    "itemcf": {
+      "@50": {
+        "recall": 0.1043,
+        "hit_rate": 0.3207
+      },
+      "@100": {
+        "recall": 0.1583,
+        "hit_rate": 0.4307
+      },
+      "@200": {
+        "recall": 0.2355,
+        "hit_rate": 0.5477
+      },
+      "@500": {
+        "recall": 0.3575,
+        "hit_rate": 0.6861
+      },
+      "catalog_coverage": 0.8143
+    },
+    "popularity": {
+      "@50": {
+        "recall": 0.0512,
+        "hit_rate": 0.1867
+      },
+      "@100": {
+        "recall": 0.0761,
+        "hit_rate": 0.2598
+      },
+      "@200": {
+        "recall": 0.1056,
+        "hit_rate": 0.3345
+      },
+      "@500": {
+        "recall": 0.1541,
+        "hit_rate": 0.439
+      },
+      "catalog_coverage": 0.7105
+    },
+    "rrf_fusion": {
+      "@50": {
+        "recall": 0.0869,
+        "hit_rate": 0.2866
+      },
+      "@100": {
+        "recall": 0.1393,
+        "hit_rate": 0.3974
+      },
+      "@200": {
+        "recall": 0.2124,
+        "hit_rate": 0.5235
+      },
+      "@500": {
+        "recall": 0.3352,
+        "hit_rate": 0.6674
+      },
+      "catalog_coverage": 0.8148
+    }
+  },
+  "catalog": "data/processed/kuairand-pure-5k/interactions.csv",
+  "rerank_effect": {
+    "evaluated_users": 200,
+    "top_k": 20,
+    "baseline_score_order": {
+      "mean_distinct_categories": 7.1,
+      "mean_max_category_share": 0.54
+    },
+    "diversity_reranked": {
+      "mean_distinct_categories": 17.845,
+      "mean_max_category_share": 0.092
+    },
+    "score_retention": 0.8733,
+    "mean_topk_overlap": 0.4432
+  }
+}
